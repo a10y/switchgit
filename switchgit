@@ -43,7 +43,7 @@ in ~/.gitconfig somewhere else, and then copy it in later.
 }
 
 function print_usage() {
-    echo "Usage: switchgit [-l] [-h] [new NAME] [CHOSEN_CONFIG]"
+    echo "Usage: switchgit [-l] [-h] [new NAME] [set CHOSEN_CONFIG]"
 }
 
 # Ensure the save directory exists.
