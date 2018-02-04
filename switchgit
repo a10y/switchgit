@@ -15,7 +15,6 @@ function create_config() {
 function list_configs() {
     printf "Available configs:\n---------------\n"
     for config in $SAVE_DIR/*; do
-        echo "CONFIG $config"
         # Print the current config with a star.
         if [[ "$(basename $config)" = "$(basename `readlink -n $HOME/.gitconfig`)" ]]; then
             echo "> `basename $config`"
