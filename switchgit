@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+# Directory where all configs are saved.
+SAVE_DIR=$HOME/.switchgit
+
+## Create a new named config.
+function create_config() {
+    # Create a new empty named config
+    echo "Creating config with name '$1'."
+    touch $SAVE_DIR/$1
+    echo "Done."
+}
+
+## List your current set of configs
+function list_configs() {
+    printf "Available configs:\n---------------\n"
+    for config in $SAVE_DIR/*; do
+        echo "CONFIG $config"
+        # Print the current config with a star.
+        if [[ "$(basename $config)" = "$(basename `readlink -n $HOME/.gitconfig`)" ]]; then
+            echo "> `basename $config`"
+        else
+            echo "- `basename $config`"
+        fi
+    done
+}
+
+## Set your current config
+function set_current_config() {
+    # Re-link
+    if [[ -f "$HOME/.gitconfig" && -z "`readlink $HOME/.gitconfig`" ]]; then
+        echo 1>&2 '
+WARNING!!!!!
+Before using switchgit, please migrate your existing global config
+in ~/.gitconfig somewhere else, and then copy it in later.
+'
+        exit 1
+    fi
+    # Is a softlink, we migrate over.
+    if [[ -f "$HOME/.gitconfig" ]]; then
+        rm $HOME/.gitconfig
+    fi
+    ln -s $SAVE_DIR/$1 $HOME/.gitconfig
+}
+
+function print_usage() {
+    echo "Usage: switchgit [-l] [-h] [new NAME] [CHOSEN_CONFIG]"
+}
+
+# Ensure the save directory exists.
+mkdir -p $SAVE_DIR
+
+case "$1" in
+    '-l'|'list')
+        list_configs
+        ;;
+    '-h'|'help')
+        print_usage
+        exit 0
+        ;;
+    'new')
+        create_config "$2"
+        set_current_config "$2"
+        ;;
+    'set')
+        set_current_config "$2"
+        ;;
+    *)
+        print_usage
+        exit 1
+        ;;
+esac
+
